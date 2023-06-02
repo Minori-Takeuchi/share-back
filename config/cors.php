@@ -17,17 +17,20 @@ return [
 
     'paths' => [
         'api/*',
+        'register',
+        'login',
+        'logout',
         'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('SANCTUM_STATEFUL_DOMAINS')],
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
 
-    'exposed_headers' => ['X-XSRF-TOKEN'],
+    'exposed_headers' => [],
 
     'max_age' => 0,
 

@@ -7,7 +7,8 @@ use App\Http\Controllers\Auth\LogoutController;
 
 
 Route::post('/register', RegisterController::class)->name('register');
-Route::post('/login', LoginController::class)->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+
 Route::post('/logout', LogoutController::class)->name('logout');
 Route::get('/', function () {
     return view('welcome');

@@ -4,38 +4,25 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use Illuminate\Auth\AuthManager;
+use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Auth\AuthenticationException;
+use Illuminate\Support\Facades\Auth;
 
 
 class LoginController extends Controller
 {
-    /**
-     * @param AuthManager $auth
-     */
-    public function __construct(
-        private readonly AuthManager $auth,
-    ) {
-    }
-
-    /**
-     * @param LoginRequest $request
-     * @return JsonResponse
-     * @throws AuthenticationException
-     */
-    public function __invoke(LoginRequest $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->only(['email', 'password']);
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => 'required',
+        ]);
 
-        if ($this->auth->guard()->attempt($credentials)) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-
-            return new JsonResponse([
-                'message' => 'Authenticated.',
-            ]);
+            return response()->json(['name' => Auth::user()->email], 200);
         }
 
-        throw new AuthenticationException();
+        throw new Exception('ログインに失敗しました。再度お試しください');
     }
 }
