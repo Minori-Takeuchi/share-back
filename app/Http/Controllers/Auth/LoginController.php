@@ -4,25 +4,31 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 
 class LoginController extends Controller
 {
-    public function login(LoginRequest $request): JsonResponse
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => 'required',
-        ]);
+        try {
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return response()->json(['name' => Auth::user()->email], 200);
+            if (Auth::attempt($request->only('email', 'password'))) {
+                return response()->json([
+                    'message' => 'Successfully logged in'
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'Invalid credentials'
+                ], 401);
+            }
+
+        } catch(\Exception $e) {
+            $errorMessage = $e->getMessage();
+            return response()->json([
+                'error' => $errorMessage
+            ], 500);
         }
 
-        throw new Exception('ログインに失敗しました。再度お試しください');
     }
 }

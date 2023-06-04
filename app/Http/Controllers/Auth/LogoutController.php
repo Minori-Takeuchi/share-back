@@ -3,38 +3,22 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Auth\AuthManager;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LogoutController extends Controller
 {
-    /**
-     * @param AuthManager $auth
-     */
-    public function __construct(
-        private readonly AuthManager $auth,
-    ) {
-    }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function __invoke(Request $request): JsonResponse
+    public function logout()
     {
-        if ($this->auth->guard()->guest()) {
-            return new JsonResponse([
-                'message' => 'Already Unauthenticated.',
-            ]);
+        if (Auth::guest()) {
+            return response()->json([
+                'message' => 'Already Unauthenticated',
+            ],401);
         }
 
-        $this->auth->guard()->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return new JsonResponse([
-            'message' => 'Unauthenticated.',
-        ]);
+        Auth::logout();
+        return response()->json([
+            'message' => 'Successfully logged out',
+        ],200);
     }
 }
