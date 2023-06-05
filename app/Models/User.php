@@ -31,6 +31,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -41,4 +43,26 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // ブロックした側のユーザー情報
+    public function blockedUsers()
+    {
+        return $this->hasMany(BlockedUser::class, 'user_id');
+    }
+
+    // ブロックされた側のユーザー情報
+    public function blockingUsers()
+    {
+        return $this->hasMany(BlockedUser::class, 'blocked_user_id');
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class,'user_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class,'user_id');
+    }
 }
